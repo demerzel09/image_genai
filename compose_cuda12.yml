@@ -1,0 +1,20 @@
+services:
+  app:
+    image: nvcr.io/nvidia/pytorch:24.10-py3
+    container_name: image_genai_app
+    working_dir: /image_genai
+    gpus: all
+    environment:
+      - DISPLAY=:0
+      - XAUTHORITY=${HOME}/.Xauthority
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    volumes:
+      - .:/image_genai
+      - ./image_genai/data:/data
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${HOME}/.Xauthority:${HOME}/.Xauthority:ro
+    command: ["/bin/bash", "-c", "./setup_comfyui.sh","sleep infinity"]
+    ports:
+      - "8190:8190"
+    restart: unless-stopped
