@@ -17,7 +17,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ${HOME}/.Xauthority:${HOME}/.Xauthority:ro
     # command: bash -c "./setup_comfyui.sh && sleep infinity"
-    command: ["/bin/bash", "-c", "./setup_comfyui_raw.sh", "sleep infinity"]
+    command: ["/bin/bash", "-c", "./setup_comfyui_raw.sh && sleep infinity"]
     ports:
       - "8190:8190"
     restart: unless-stopped

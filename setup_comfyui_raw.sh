@@ -1,5 +1,32 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -e
+
+# 非対話モードでタイムゾーンを設定
+export DEBIAN_FRONTEND=noninteractive
+ln -fs /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+apt-get update
+apt-get install -y tzdata
+dpkg-reconfigure --frontend noninteractive tzdata
+
+
+apt-get install -y \
+    ffmpeg \
+    libavformat-dev \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavutil-dev \
+    libswscale-dev \
+    libswresample-dev \
+    libavfilter-dev \
+    pkg-config \
+    python3-dev
+
+
+
+# 必要パッケージのインストール
+apt-get install -y --no-install-recommends git curl ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # カレントを image_genai に移動（compose.ymlがここにある想定）
 cd "$(dirname "$0")"
@@ -26,6 +53,6 @@ fi
 echo "--- Pythonパッケージインストール ---"
 pip install --upgrade pip
 pip install -r ComfyUI/requirements.txt
-
+pip install -r ComfyUI/custom_nodes/ComfyUI-Manager/requirements.txt
 
 echo "=== セットアップ完了 ==="
