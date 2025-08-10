@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  comfyui:
+    # ベースはお使いのものに合わせてOK（例: nvidia/cuda:12.1.1-runtime-ubuntu22.04 など）
+    image: ubuntu:22.04
+    container_name: comfyui
+    working_dir: /workspace
+
+    # 初回セットアップとリポジトリ/モデルを永続化
+    volumes:
+      - ./setup_comfyui_raw.sh:/workspace/setup_comfyui_raw.sh:ro
+      - comfyui_workspace:/workspace
+      - comfyui_models:/models
+
+    environment:
+      - TZ=Asia/Tokyo
+      - DEBIAN_FRONTEND=noninteractive
+      - PIP_ROOT_USER_ACTION=ignore   # rootでpipしても警告で止めない
+
+    # ゾンビ対策＆対話しやすさ
+    init: true
+    tty: true
+    stdin_open: true
+
+    # 起動→セットアップ→常駐
+    #command: ["/bin/bash", "-lc", "./setup_comfyui_raw.sh && sleep infinity"]
+    command: ["/bin/bash", "-lc", sleep infinity"]
+
+    # 再起動してもOK（冪等）
+    restart: unless-stopped
+
+    # ポートを出すなら（ComfyUI の既定は 8188）
+    # ports:
+    #   - "8188:8188"
+
+    # GPU を使う場合（Compose v3 の例）
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  comfyui_workspace:
+  comfyui_models:
