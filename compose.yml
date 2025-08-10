@@ -27,8 +27,8 @@ services:
     stdin_open: true
 
     # 起動→セットアップ→常駐
-    #command: ["/bin/bash", "-lc", "./setup_comfyui_raw.sh && sleep infinity"]
-    command: ["/bin/bash", "-lc", "sleep infinity"]
+    command: ["/bin/bash", "-lc", "./setup_comfyui.sh && sleep infinity"]
+    #command: ["/bin/bash", "-lc", "sleep infinity"]
 
     ports:
       - "8190:8190"

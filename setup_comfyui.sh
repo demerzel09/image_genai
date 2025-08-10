@@ -41,6 +41,26 @@ ensure_python312() {
     python3.12 -m ensurepip --upgrade
     python3.12 -m pip install --upgrade pip setuptools wheel
   fi
+  
+  # 2) pip が無ければ導入（ensurepip → フォールバックの順）
+  if ! python3.12 -m pip --version >/dev/null 2>&1; then
+    echo ">>> Bootstrapping pip for Python 3.12"
+    # ensurepip を試す（venv が無い or 壊れている場合に備えて再インストールも可）
+    apt_update_safe
+    apt_install_safe python3.12-venv || true
+    python3.12 -m ensurepip --upgrade || true
+
+    # ensurepip で入らない環境向けフォールバック（get-pip.py）
+    if ! python3.12 -m pip --version >/dev/null 2>&1; then
+      apt_install_safe curl || true
+      curl -fsSL https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py
+      python3.12 /tmp/get-pip.py
+      rm -f /tmp/get-pip.py
+    fi
+  fi
+
+  # 3) 最低限のビルド系と pip ツールの更新
+  python3.12 -m pip install --upgrade pip setuptools wheel
 }
 
 apt_update_safe() {

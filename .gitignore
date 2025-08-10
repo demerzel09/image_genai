@@ -1,1 +1,6 @@
 *Zone.Identifier
+.venv/
+*.pyc
+__pycache__/
+models/
+ComfyUI/
