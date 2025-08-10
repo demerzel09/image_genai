@@ -1,23 +1,48 @@
 services:
   app:
-    image: pytorch/pytorch:2.1.2-cuda11.8-cudnn8-devel
+    image: nvidia/cuda:12.8.1-cudnn-devel-ubuntu22.04
     container_name: image_genai_app
-    working_dir: /image_genai
+    working_dir: /workspace
     gpus: all
+    # 初回セットアップとリポジトリ/モデルを永続化
+    volumes:
+      #- ./setup_comfyui_raw.sh:/workspace/setup_comfyui_raw.sh:ro
+      - .:/workspace/
+      - ./data:/workspace/data
+      - ./models:/workspace/models      
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ${HOME}/.Xauthority:${HOME}/.Xauthority:ro
     environment:
       - TZ=Asia/Tokyo
       - DISPLAY=:0
       - XAUTHORITY=${HOME}/.Xauthority
-      - PIP_DISABLE_PIP_VERSION_CHECK=1
       - PYTHONUNBUFFERED=1
+      - PIP_DISABLE_PIP_VERSION_CHECK=1
       - XFORMERS_DISABLED=1
-    volumes:
-      - .:/image_genai
-      - ./image_genai/data:/data
-      - /tmp/.X11-unix:/tmp/.X11-unix
-      - ${HOME}/.Xauthority:${HOME}/.Xauthority:ro
-    # command: bash -c "./setup_comfyui.sh && sleep infinity"
-    command: ["/bin/bash", "-c", "./setup_comfyui_raw.sh && sleep infinity"]
+      - DEBIAN_FRONTEND=noninteractive
+      - PIP_ROOT_USER_ACTION=ignore   # rootでpipしても警告で止めない      
+    # ゾンビ対策＆対話しやすさ
+    init: true
+    tty: true
+    stdin_open: true
+
+    # 起動→セットアップ→常駐
+    #command: ["/bin/bash", "-lc", "./setup_comfyui_raw.sh && sleep infinity"]
+    command: ["/bin/bash", "-lc", "sleep infinity"]
+
     ports:
       - "8190:8190"
     restart: unless-stopped
+
+    # GPU を使う場合（Compose v3 の例）
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+volumes:
+  image_genai:
+  image_genai_models:
+  image_genai_data:
