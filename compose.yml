@@ -9,7 +9,6 @@ services:
       #- ./setup_comfyui_raw.sh:/workspace/setup_comfyui_raw.sh:ro
       - .:/workspace/
       - ./data:/workspace/data
-      - ./models:/workspace/models      
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ${HOME}/.Xauthority:${HOME}/.Xauthority:ro
     environment:
