@@ -5,3 +5,4 @@ __pycache__/
 models/
 ComfyUI/
 data/
+link_comfy_dirs.sh
